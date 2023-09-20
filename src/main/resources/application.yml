@@ -1,0 +1,69 @@
+server:
+  port: 8080
+  compression:
+    enabled: true # Whether response compression is enabled.
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json # Comma-separated list of MIME types that should be compressed.
+    min-response-size: 1024 # Minimum "Content-Length" value that is required for compression to be performed.
+
+spring:
+  application:
+    name: makersnews
+  profiles:
+    active: development
+  datasource:
+    url: jdbc:mysql://${mysql.url}/${mysql.schema}?createDatabaseIfNotExist=true&useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${mysql.username}
+    password: ${mysql.password}
+    hikari:
+      auto-commit: false
+      connection-timeout: 250 # É uma configuração em milliseconds. O ideal é manter baixo para que estoure timeout logo e não prenda as threads.
+      max-lifetime: 600000 # Tempo máximo que uma conexão pode ficar aberta (10 min) - security.
+      maximum-pool-size: 20 # Mantemos até no máx 20 conexões com o banco de dados. O ideal é manter baixo mesmo, pois é algo custoso para o banco gerenciar. https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
+      minimum-idle: 10
+      pool-name: master
+  jpa:
+    open-in-view: false
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      "[hibernate.dialect]": org.hibernate.dialect.MySQL8Dialect
+      "[hibernate.generate_statistics]": false
+      "[hibernate.connection.provider_disables_autocommit]": true
+      # Para aumentar a performance ao máximo, desabilitamos o auto-commit e o open-in-view.
+      # https://vladmihalcea.com/why-you-should-always-use-hibernate-connection-provider_disables_autocommit-for-resource-local-jpa-transactions/
+  mail:
+    host: smtp.sendgrid.net
+    port: 587
+    username: apikey
+  freemarker:
+    settings:
+      locale: pt_BR
+
+## MakersNews
+makersnews:
+  auth-url: http://localhost:8081
+  auth:
+    clients:
+      admin:
+        callback-urls: http://localhost:9001/authorize,http://localhost:9002/authorize,http://localhost:8082/oauth2-redirect.html
+      cms:
+        callback-urls: http://localhost:9001/authorize,http://localhost:9002/authorize,http://localhost:8082/oauth2-redirect.html
+      swagger-ui:
+        secret: swagger123
+    access-token-validity: 5m
+    refresh-token-validity: 30d
+    tokens-signing-key: 7EoTQsw6$KycR&B9q4YAMPCss!!F6fE7FqNv!B2vEz
+  email:
+    impl: fake
+    from: MakersNews <donotreply@makersnews.com.br>
+    sandbox:
+      to: test@makersnews.com.br
+  security:
+    reset-token:
+      password-reset:
+        url: ${makersnews.auth-url}/change-password/{token}
+        secret: alganews-secret-2
+        timeout: 5m
+    logout-default-redirect-url: http://localhost:3000

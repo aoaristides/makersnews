@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  mysql:
+    container_name: makersnews_mysql
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=Tulipa123
+      - MYSQL_DATABASE=makersnews_db
+    security_opt:
+      - seccomp:unconfined
+    ports:
+      - "33006:3306"
+    volumes:
+      - '../../.docker/db/data:/var/lib/mysql'
+    networks:
+      - makersnews_network
+
+networks:
+  makersnews_network:
+    driver: bridge

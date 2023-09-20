@@ -1,0 +1,28 @@
+server:
+  port: ${PORT:8080}
+
+mysql:
+  username: ${DATABASE_MYSQL_USERNAME:root}
+  password: ${DATABASE_MYSQL_PASSWORD:Tulipa123}
+  schema: makersnews_db
+  url: ${DATABASE_MYSQL_URL:localhost:33006}
+
+spring:
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+  mail:
+    host: smtp.sendgrid.net
+    port: 587
+    username: apikey
+  freemarker:
+    settings:
+      locale: pt_BR
+
+## MakersNews
+alganews:
+  email:
+    impl: smtp
+  auth-url: https://auth.makersnews.com

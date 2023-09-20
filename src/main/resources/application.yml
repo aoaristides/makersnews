@@ -40,6 +40,10 @@ spring:
   freemarker:
     settings:
       locale: pt_BR
+  session:
+    jdbc:
+      initialize-schema: always
+
 
 ## MakersNews
 makersnews:
